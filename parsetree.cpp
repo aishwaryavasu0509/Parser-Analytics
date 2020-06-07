@@ -15,7 +15,6 @@ enum nodeType{
     ASSIGNN ,PROGN,BLOCKN,DECSEQN,DECN,TYPEN,VARLISTN,VARLISTTAILN,COMSEQN,COMSEQTAILN,COMN,COMTAILN,EXPRN,EXPRTAILN,SIMEXPRN,SIMEXPRTAILN,
     TERMN,TERMTAILN,VARFN, RELATN,WEAKN,STRONGN,ELEMENTN,INTEGERVALUEN
 };
-//*****************************************
 class Token{
 public :
     tokenType type;
@@ -25,7 +24,7 @@ public :
         name="";
     }
 };
-//*****************************************
+
 class Node{
 public:
     nodeType type;
@@ -41,19 +40,14 @@ public:
             delete child[i];
         }
 };
-//*****************************************
-Node * root;			// pointer that pointing to the root node
-//*****************************************
-//*****************************************
-//*****************************************
-//*****************************************
-//*****************************************
+
+Node * root;			
 class Parser{
 private:
     fstream f;
-    Token currentToken;				//currentToken>>class>>(type,name)
+    Token currentToken;				
 
-    Token getToken(){				// ( >>>>>>>>>>>>>>>>>>>>>>>> (type:LPARN , name:"(")
+    Token getToken(){				
 	    char ch;
 	    Token t;
 	    f.get(ch);
@@ -71,7 +65,7 @@ private:
 	            t.name="$$";
 	            t.type=ENDSOURCE;
 	    }
-	    else if(ch=='('){t.name=ch ;  t.type=LPARN;}		//t.name="(";
+	    else if(ch=='('){t.name=ch ;  t.type=LPARN;}
 	    else if(ch==')'){t.name=ch ; t.type= RPARN;}
 	    else if(ch=='+'){t.name= ch; t.type= PLUS;}
 	    else if(ch=='-'){t.name= ch; t.type=MINUS ;}
@@ -86,16 +80,16 @@ private:
 	            t.name=ch ;
 	            f.get(ch);
 	            if(ch=='>'){
-	                t.name+=ch;		//t.name="<>";
+	                t.name+=ch;		
 	                t.type=NOTEQUAL;
 	            }
 	            else if(ch=='='){
-	                t.name+=ch;		//t.name = "<=";
+	                t.name+=ch;		
 	                t.type=LESSEQUAL;
 	            }
 	            else{
 	                f.putback(ch);
-	                t.type=LESS;	//t.name = "<";		return t >> t(name="<" , type=LESS)
+	                t.type=LESS;	
 	            }
 	        }
 	    else if(ch=='>')
@@ -126,7 +120,7 @@ private:
 	        else if(isalpha(ch)){
 	            t.name=ch;
 	            f.get(ch);
-	            while(isalnum(ch)){		//program	t.name="program" , t.type=	>>chech_reserved(t){t.name="program">>t.type=PROGRAM_SY}
+	            while(isalnum(ch)){		
 	                t.name+=ch;
 	                f.get(ch);
 	            }
@@ -137,7 +131,7 @@ private:
 	            t.name=ch;
 	            f.get(ch);
 	            while(isdigit(ch)){
-	                t.name+=ch;			// 250  t.name="250" , t.type=INTEGERVALUE
+	                t.name+=ch;			
 	                f.get(ch);
 	            }
 	            f.putback(ch);
@@ -148,10 +142,8 @@ private:
 	                t.type=ERROR;
 	        }
 
-   //must be executed
 	        return t;
 }
-//*****************************************
   Token checkReserved(Token t){
     if(t.name=="program") t.type=PROGRAM;
     else if(t.name=="is") t.type=IS;
@@ -177,22 +169,10 @@ private:
 
 
 
-//*****************************************
 
-
-//*****************************************//*****************************************
-
-// program id is	>> Grammar
-// program x is     >> File			>> current_token(type=PROGRAM_SY  , name = "program")
-
-
-// match(program);
-// match(id);
-// match(is);
-
-void match(tokenType type){		//type=PROGRAM_SY
+void match(tokenType type){		
     if(currentToken.type==type){
-        cout<<currentToken.name<<" is matched\n";			// program is matched
+        cout<<currentToken.name<<" is matched\n";			
     }
     else{
         syntaxError(currentToken);
@@ -200,15 +180,11 @@ void match(tokenType type){		//type=PROGRAM_SY
     if(type!=ENDSOURCE)
         currentToken=getToken();
 }
-//*****************************************
+
 void syntaxError(Token t){
-    cout<<t.name<<" isn't expected\n";			//program is not expected
+    cout<<t.name<<" isn't expected\n";			
 }
-//*****************************************//*****************************************
 
-
-//*****************************************
-/// <program> ::= program <id> is <block>
 Node* program(){
     Node* ptr= new Node();
     ptr->type=PROGN;
@@ -233,7 +209,7 @@ Node* program(){
     ptr->child[3]=block();
     return ptr;
 }
-//*****************************************
+
 /// <block> ::= <dec-seq> begin <command-seq> end
 Node* block(){
     Node*ptr=new Node();
@@ -254,7 +230,7 @@ Node* block(){
     match(END);
     return ptr;
 }
-//*****************************************
+
 /// <dec-seq> ::= E | <dec><dec-seq>
 Node* decSeq(){
     Node* ptr=new Node();
@@ -265,7 +241,7 @@ Node* decSeq(){
     }
     return ptr;
 }
-//*****************************************
+
 /// <dec> ::= var <varlist> : <type> ;
 Node* dec(){
     Node* ptr=new Node();
@@ -293,7 +269,7 @@ Node* dec(){
 
     return ptr;
 }
-//*****************************************
+
 /// <type> ::= integer | boolean
 Node* type(){
     Node* ptr=new Node();
@@ -316,7 +292,7 @@ Node* type(){
     }
     return ptr;
 }
-//*****************************************
+
 /// <var-list> ::= <var> | <var> , <var-list> -------- Left Common Prefix ---------
 /// <var-list> ::= <var><var-list-tail>
 Node*  varList(){
@@ -340,7 +316,7 @@ Node*  varListTail(){
     }
     return ptr;
 }
-//*****************************************
+
 /// <com-seq> ::= <com> | <com> ; <com-seq>     ---------- Left Common Prefix --------
 /// <com-seq> ::= <com> <com-seq-tail>
 Node*  comSeq(){
@@ -351,7 +327,7 @@ Node*  comSeq(){
     return ptr;
 }
 
-//*****************************************
+
 /// <com-seq-tail> ::= E | ; <com-seq>
 Node*  comSeqTail(){
     Node* ptr=new Node();
@@ -365,7 +341,7 @@ Node*  comSeqTail(){
     }
     return ptr;
 }
-//*****************************************
+
 /// <com> ::= <var> := <expr> | read <var> | write <expr> | while <expr> do <com-seq> end while
 ///                     | if <expr> then <com-seq> end if | if <expr> then <com-seq> else <com-seq> end if
 
@@ -460,7 +436,7 @@ Node*  command(){
 
     return ptr;
 }
-//*****************************************
+
 /// <com-tail> ::= end if | else <com-seq> end if
 Node*  comTail(){
     Node* ptr=new Node();
@@ -502,7 +478,7 @@ Node*  comTail(){
     }
     return ptr;
 }
-//*****************************************
+
 /// <expr> ::= <simple-expr> | <simple-expr><relation><simple-expr> ------------ Left Common Prefix --------------
 /// <expr> ::=<simple-expr> <expr-tail>
 Node*  expr(){
@@ -512,7 +488,7 @@ Node*  expr(){
     ptr->child[1]=exprTail();
     return ptr;
 }
-//*****************************************
+
 /// <expr-tail> ::= E | <relation> < simple-expr>
 Node*  exprTail(){
     Node* ptr=new Node();
@@ -524,7 +500,7 @@ Node*  exprTail(){
        }
     return ptr;
 }
-//*****************************************
+
 /// <simple-expr> ::= <term> | <simple-expr><weak op><term> ------------ Left Recursive --------------
 /// <simple-expr> ::=<term> <simple-expr-tail>
 Node*  simpExpr(){
@@ -534,7 +510,7 @@ Node*  simpExpr(){
     ptr->child[1]=simpExprTail();
     return ptr;
 }
-//*****************************************
+
 /// <simple-expr-tail> ::= E | <weak op> <term> <simple-expr-tail>
 Node*  simpExprTail(){
     Node* ptr=new Node();
@@ -546,7 +522,6 @@ Node*  simpExprTail(){
     }
     return ptr;
 }
-//*****************************************
 /// <term>::= <element> | <term> < strong op > <element> ------------ Left Recursive --------------
 /// <term> ::= <element> < term-tail>
 Node*  term(){
@@ -556,7 +531,7 @@ Node*  term(){
     ptr->child[1]=termTail();
     return ptr;
 }
-//*****************************************
+
 /// <term-tail> ::= E | <strong op> <element> <term-tail>
 Node*  termTail(){
     Node* ptr=new Node();
@@ -569,7 +544,7 @@ Node*  termTail(){
     return ptr;
 }
 
-//*****************************************
+
 /// <element> ::= <numeral> | <var> | ( <expr> ) | true | false | not <element> | - <element>
 Node*  element(){
     Node* ptr=new Node();
@@ -629,7 +604,6 @@ Node*  element(){
     }
     return ptr;
 }
-//*****************************************
 /// <var> ::= ID
 Node*  var(){
     Node* ptr=new Node();
@@ -640,7 +614,6 @@ Node*  var(){
     match(ID);
     return ptr;
 }
-//*****************************************
 /// <relation> ::= < | <= | <> | = | > | >=
 Node*  relat(){
     Node* ptr=new Node();
@@ -687,7 +660,7 @@ Node*  relat(){
     }
     return ptr;
 }
-//*****************************************
+
 /// <weak op>::= + | - | or
 Node*  weak(){
     Node* ptr=new Node();
@@ -716,7 +689,6 @@ Node*  weak(){
     }
     return ptr;
 }
-//*****************************************
 
 /// <strong op> ::= * | / | and
 Node*  strong(){
@@ -747,9 +719,7 @@ Node*  strong(){
     return ptr;
 }
 
-//***************************************************************************************************************************
-//***************************************** END OF PRIVATE MEMBERS **********************************************************
-//***************************************************************************************************************************
+
 public:
     Parser(string fileName){
 		f.open(fileName.c_str());
@@ -759,11 +729,11 @@ public:
 		          //exit(1);
 		     }
 	}
-//*****************************************
+
     ~Parser(){
 		f.close();
 	}
-//*****************************************
+
 //<sampleParser> ::= <program> eof
 void  sampleParser(){
 	    Node* ptr = new Node();									//START
@@ -779,7 +749,7 @@ void  sampleParser(){
 	    match(ENDSOURCE);
 }
 
-//******************************************
+
 void displayTree(Node* Tree){		//Tree = root
     if(Tree){
         cout<<"|||| " <<Tree->Lexeme<<endl;
@@ -790,10 +760,7 @@ void displayTree(Node* Tree){		//Tree = root
         displayTree(Tree->child[4]);
         displayTree(Tree->child[5]);
     }
-}
-//*****************************************
 
-//*****************************************
 };	// Class Ending
 int main(){
 	string filename;
