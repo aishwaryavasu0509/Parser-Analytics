@@ -1,0 +1,20 @@
+BACKUS-NAUR FORM
+<if_statement>::=if<condition>then<statement>
+                |if<condition>then<statement>endif
+                |if<condition>then<statement>else<statements>endif
+<condition>:=<expression><reletional_operstor><expression>
+<relational_operator>:=<\><=\>=\=
+<expression>::=<expression>+<term>|<expression>-<term>\<term>
+<term>::=<term>*<factor>|<term>/<factor>|<factor>
+<factor>::=<identifier>|<number>|(<expression>)
+<statements>::=<statements><statements>
+<statements>::=<assignment>|<if>|<for>....
+<assignents>::=<identifier>=<expression>
+<identifier>::=<letter>|<identifier><letter>|<identifier><digit>
+<letter>::=a|b|c|d.....A|B|C|D|....
+<digit>:=0|1|2|3|4|......|9
+<number>::=<integer>|<integer><integer>
+<integer>::=<digit>|<integer><digit>
+<string_literal>::=<quote><charcter><quote>|<quote><charavter><quote>
+<character>:=<letter>|<digit>|.....
+<character>:=<character><character>
