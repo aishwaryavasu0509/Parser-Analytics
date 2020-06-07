@@ -1,0 +1,9 @@
+program x is
+var x,y,z: integer
+begin
+x:=9;
+y:=2;
+if(x) then
+z:=12
+end if
+end
